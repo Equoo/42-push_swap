@@ -6,7 +6,7 @@
 /*   By: dderny <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 23:58:57 by dderny            #+#    #+#             */
-/*   Updated: 2025/03/11 21:31:28 by dderny           ###   ########.fr       */
+/*   Updated: 2025/03/15 01:34:04 by dderny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@ static char	*str_custom_errors(int err)
 		return ("./client [PID] [message]");
 	if (err == ERRINITPID)
 		return ("Invalid PID");
+	if (err == ERRINITENTRY)
+		return ("Invalid numbers entry");
 	return ("Unknown error");
 }
 
@@ -43,6 +45,8 @@ int	print_cerror(char *category, int error)
 		errorstr = str_custom_errors(error);
 	else
 		errorstr = ft_strerror(error);
+	if (!error)
+		errorstr = "Success";
 	ft_printf("%s: %s\n", category, errorstr);
 	return (error);
 }

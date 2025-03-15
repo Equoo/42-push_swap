@@ -6,7 +6,7 @@
 /*   By: dderny <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 22:18:56 by dderny            #+#    #+#             */
-/*   Updated: 2025/03/11 22:28:35 by dderny           ###   ########.fr       */
+/*   Updated: 2025/03/15 01:45:06 by dderny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 #include "stack.h"
 
 #include <libft.h>
+#include <errno.h>
+#include <ft_printf.h>
 #include <stdlib.h>
 
 int	main(int argc, char **argv)
@@ -33,10 +35,24 @@ int	main(int argc, char **argv)
 	stack_b.stack = ft_calloc(stack_b.size, sizeof(int));
 	if ((!stack_a.stack || !stack_b.stack) && print_error("Stack creation"))
 		return (EXIT_FAILURE);
+	
 	i = 1;
 	while (i < argc)
 	{
-		stack_a.stack[i - 1] = argv[i];
+		char *endptr;
+		stack_a.stack[i - 1] = ft_strtol(argv[i], &endptr, 0);
+		if (*endptr && print_cerror("Invalid number", ERRINITENTRY))
+			return (EXIT_FAILURE);
+		i++;
+	}
+
+	
+	
+	i = 0;
+	while (i < argc - 1)
+	{
+		ft_printf("%d\n", stack_a.stack[i]);
+		i++;
 	}
 	return (EXIT_SUCCESS);
 }

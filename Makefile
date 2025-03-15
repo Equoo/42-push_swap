@@ -1,16 +1,11 @@
 # Variables
 DEBUG = 0
+NAME = push_swap
 STATE_FILE := .state.tmp
-SERVER = server
-CLIENT = client
 CC = cc
-NORMIGNORE = GLOBAL_VAR_DETECTED
+NORMIGNORE =
 
-ifdef NAME
-	DIR_OBJ = obj/$(NAME)/
-else
-	DIR_OBJ = obj/
-endif
+DIR_OBJ = obj/
 SRC_DIR = src/
 INC_DIR = headers/
 LIBFT_DIR = libft/
@@ -23,15 +18,8 @@ LIBS = -L$(LIBFT_DIR) -lft
 
 # Sources
 SRCS = main.c \
-		packet/packet.c \
-		packet/core.c \
-		packet/string.c \
-		packet/uint32.c \
-		packet/users.c \
-		packet/hash.c \
 		ft_error.c \
-		server.c \
-		client.c \
+		swap.c \
 
 # Object files and dependencies
 OBJS = $(patsubst %.c,$(DIR_OBJ)%.o,$(SRCS))
@@ -55,8 +43,7 @@ clean_cmd:
 # Targets
 .PHONY: all
 all: clean_cmd check_git_submodules banner libft check_build
-	@$(MAKE) -j$(shell nproc) --no-print-directory EXTRAFLAGS="$(EXTRAFLAGS)" NAME=$(SERVER) $(SERVER)
-	@$(MAKE) -j$(shell nproc) --no-print-directory EXTRAFLAGS="$(EXTRAFLAGS)" NAME=$(CLIENT) $(CLIENT)
+	@$(MAKE) -j$(shell nproc) --no-print-directory EXTRAFLAGS="$(EXTRAFLAGS)" $(NAME)
 	@STATE=$$(cat $(STATE_FILE) 2>/dev/null || echo 0); \
 	if [ $$STATE -eq 1 ]; then \
 		echo -e "$(BLUE)[✓] Everything is up to date! No need to rebuild.$(RESET)"; \
@@ -68,11 +55,11 @@ all: clean_cmd check_git_submodules banner libft check_build
 # Check if recompilation is needed
 .PHONY: check_build
 check_build:
-	@if [ -f $(SERVER) ] && [ -f $(CLIENT) ] && \
-		! find $(SRC_DIR) -type f -name '*.c' -newer $(SERVER) | grep -q . && \
-		! find $(INC_DIR) -type f -name '*.h' -newer $(SERVER) | grep -q . && \
-		! [ Makefile -nt $(SERVER) ] && \
-		! [ -z "$(wildcard $(OBJS)/$(SERVER))/" ]; then \
+	@if [ -f $(NAME) ] && \
+		! find $(SRC_DIR) -type f -name '*.c' -newer $(NAME) | grep -q . && \
+		! find $(INC_DIR) -type f -name '*.h' -newer $(NAME) | grep -q . && \
+		! [ Makefile -nt $(NAME) ] && \
+		! [ -z "$(wildcard $(OBJS)/$(NAME))/" ]; then \
 		echo "1" > $(STATE_FILE); \
 	else \
 		echo -e "$(YELLOW)[Building MiniTalk]$(RESET)"; \
@@ -121,7 +108,7 @@ clean:
 fclean: clean
 	@echo -e "$(RED)[Full Clean]$(RESET)"
 	@$(MAKE) --no-print-directory -C $(LIBFT_DIR) fclean
-	@rm -f $(SERVER) $(CLIENT)
+	@rm -f $(NAME)
 	@echo -e "$(GREEN)[✓] Fully cleaned everything!$(RESET)"
 
 re: fclean all
