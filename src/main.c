@@ -6,7 +6,7 @@
 /*   By: dderny <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 22:18:56 by dderny            #+#    #+#             */
-/*   Updated: 2025/03/16 00:41:19 by dderny           ###   ########.fr       */
+/*   Updated: 2025/03/16 23:22:12 by dderny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@
 #include <ft_bool.h>
 #include <errno.h>
 #include <ft_printf.h>
+#include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 
@@ -156,7 +158,7 @@ void	rotate(t_stack *stack, t_bool reverse)
 //	rotate(stack_b, TRUE);
 //}
 
-void	operate(t_op op, t_vector *operations, t_stack *stack_a, t_stack *stack_b)
+void	operate(uint8_t op, t_vector *operations, t_stack *stack_a, t_stack *stack_b)
 {
 	vec_append(operations, (void *)&op);
 	if (op == OP_SA || op == OP_SS)
@@ -177,7 +179,39 @@ void	operate(t_op op, t_vector *operations, t_stack *stack_a, t_stack *stack_b)
 		rotate(stack_b, TRUE);
 }
 
+void	operate_for(t_op op, ssize_t count, t_vector *operations, t_stack *stack_a, t_stack *stack_b)
+{
+	ssize_t	i;
 
+	i = 0;
+	while (i < count)
+	{
+		operate(op, operations, stack_a, stack_b);
+		i++;
+	}
+}
+
+int		get_pivot(t_stack *stack, ssize_t size)
+{
+	return (stack->data[size - 1]); // mediane
+}
+
+void	partition(t_vector *ops, t_stack *a, t_stack *b, ssize_t size)
+{
+	int	pivot;
+	ssize_t	i;
+
+	pivot = get_pivot(a, size);
+	i = 0;
+	while (i < size)
+	{
+		if (a->data[0] >= pivot)
+			operate(OP_PB, ops, a, b);
+		else
+			operate(OP_RA, ops, a, b);
+		i++;
+	}
+}
 
 
 int	main(int argc, char **argv)
@@ -196,6 +230,8 @@ int	main(int argc, char **argv)
 	stack_b.size = argc - 1;
 	stack_a.data = ft_calloc(stack_a.size, sizeof(int));
 	stack_b.data = ft_calloc(stack_b.size, sizeof(int));
+	stack_a.actual_size = 0;
+	stack_b.actual_size = 0;
 	if ((!stack_a.data || !stack_b.data) && print_error("Stack creation"))
 		return (EXIT_FAILURE);
 	
@@ -209,18 +245,24 @@ int	main(int argc, char **argv)
 		i++;
 	}
 	stack_a.actual_size = stack_a.size;
-
-	operations = vec_new((argc - 1) * 4, sizeof(t_op));
 	
-
+	operations = vec_new((argc - 1) * 4, sizeof(uint8_t));
 	
-
+	partition(&operations, &stack_a, &stack_b, stack_a.size);
 	
+	const char **op = (const char *[]){"sa", "sb", "ss", "pa", "pb", "ra", "rb", "rr", "rra", "rrb", "rrr"};
 	i = 0;
+	while (operations.data[i])
+	{
+		ft_printf("%s\n", op[operations.data[i]]);
+		i++;
+	}
+	
+	/*i = 0;
 	while (i < argc - 1)
 	{
 		ft_printf("%d\n", stack_a.data[i]);
 		i++;
-	}
+	}*/
 	return (EXIT_SUCCESS);
 }

@@ -68,6 +68,7 @@ check_build:
 
 .PHONY: debug
 debug: EXTRAFLAGS = -O0 -g3 -DDEBUG=1
+debug: LIBFTTARGET = debug
 debug: DEBUG = 1
 debug: all
 	touch .d

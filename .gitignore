@@ -60,5 +60,5 @@ dkms.conf
 .debug
 .serverpid
 
-server
-client
+push_swap_visualizer
+push_swap
