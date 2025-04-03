@@ -1,0 +1,37 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   operate.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dderny <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/28 00:12:44 by dderny            #+#    #+#             */
+/*   Updated: 2025/03/28 00:20:22 by dderny           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "stack.h"
+
+#include <stdint.h>
+#include <ft_vector.h>
+
+void	operate(uint8_t op, t_sdata *data)
+{
+	vec_append(&data->ops, (void *)&op);
+	if (op == SA || op == SS)
+		swap(&data->a);
+	if (op == SB || op == SS)
+		swap(&data->b);
+	if (op == PA)
+		push(&data->b, &data->a);
+	if (op == PB)
+		push(&data->a, &data->b);
+	if (op == RA || op == RR)
+		rotate(&data->a, FALSE);
+	if (op == RB || op == RR)
+		rotate(&data->b, FALSE);
+	if (op == RRA || op == RRR)
+		rotate(&data->a, TRUE);
+	if (op == RRB || op == RRR)
+		rotate(&data->b, TRUE);
+}

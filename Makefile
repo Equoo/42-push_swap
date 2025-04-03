@@ -19,7 +19,11 @@ LIBS = -L$(LIBFT_DIR) -lft
 # Sources
 SRCS = main.c \
 		ft_error.c \
-		swap.c \
+		stack/operate_for.c \
+		stack/operate.c \
+		stack/push.c \
+		stack/rotate.c \
+		stack/swap.c \
 
 # Object files and dependencies
 OBJS = $(patsubst %.c,$(DIR_OBJ)%.o,$(SRCS))
