@@ -3,153 +3,167 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dderny <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: dderny <dderny@42lyon.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 22:18:56 by dderny            #+#    #+#             */
-/*   Updated: 2025/03/28 01:59:27 by dderny           ###   ########.fr       */
+/*   Updated: 2025/04/03 16:05:40 by dderny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_error.h"
 #include "ft_vector.h"
+#include "push_swap.h"
 #include "stack.h"
 
 #include <libft.h>
 #include <ft_bool.h>
 #include <errno.h>
 #include <ft_printf.h>
+#include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-void	sort_list(int *nums, size_t size)
+static int	init_stack(t_stack *stack, size_t size)
+{
+	stack->data = ft_calloc(size, sizeof(int));
+	if (!stack->data)
+		return (1);
+	stack->size = 0;
+	stack->total_size = size;
+	return (0);
+}
+
+static int	fill_stack(t_sdata *data, size_t argc, char **argv)
+{
+	char 		*endptr;
+	size_t		i;
+
+	i = 1;
+	while (i < argc)
+	{
+		data->a.data[i - 1] = ft_strtoi(argv[i], &endptr, 0);
+		data->a.size++;
+		if (*endptr)
+			errno = ERRINITINVALDIDNBR;
+		if (errno)
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+static int	is_duplicate(t_stack stack)
 {
 	size_t	i;
 	size_t	j;
-	int		swap;
 
 	i = 0;
-	while (i < size)
+	while (i < stack.size)
 	{
 		j = i + 1;
-		while (j < size)
+		while (j < stack.size)
 		{
-			if (nums[i] > nums[j])
+			if (stack.data[i] == stack.data[j])
 			{
-				swap = nums[i];
-				nums[i] = nums[j];
-				nums[j] = swap;
+				errno = ERRINITDUP;
+				return (1);
 			}
 			j++;
 		}
 		i++;
 	}
+	return (0);
 }
 
-void	partition(t_sdata *data, size_t size)
+static int	is_sorted(t_stack stack)
 {
-	if (size <= 3)
-	{
-		if (size == 2)
-		{
-			if (data->a.data[0] > data->a.data[1])
-				operate(SA, data);
-		}
-		else if (size == 3)
-		{
-			if (data->a.data[0] > data->a.data[1] && data->a.data[0] > data->a.data[2])
-			{
-				operate(RA, data);
-				if (data->a.data[0] > data->a.data[1])
-					operate(SA, data);
-			}
-			else if (data->a.data[0] > data->a.data[1] && data->a.data[0] < data->a.data[2])
-				operate(SA, data);
-			else if (data->a.data[0] < data->a.data[1] && data->a.data[0] > data->a.data[2])
-				operate(RRA, data);
-			else if (data->a.data[0] < data->a.data[1] && data->a.data[0] < data->a.data[2])
-			{
-				operate(RA, data);
-				operate(SA, data);
-				operate(RRA, data);
-			}
-		}
-		return ;
-	}
-	
-	size_t	median;
 	size_t	i;
-	size_t	j;
 
-	int	*nums = ft_calloc(size, sizeof(int));
-	if (!nums && print_error("Memory allocation"))
-		return ;
-	ft_memcpy(nums, data->a.data, size * sizeof(int));
-	
-	median = size / 2;
 	i = 0;
-	j = 0;
-	while (i < size)
+	while (i < stack.size)
 	{
-		if (nums[i] < nums[median])
+		if (stack.data[i] > stack.data[i + 1])
 		{
-			operate(PB, data);
-			j++;
+			return (1);
 		}
-		else
-			operate(RA, data);
 		i++;
 	}
-
-	free(nums);
-	
-	i = 0;
-	while (i < j)
-	{
-		operate(PA, data);
-		i++;
-	}
-	
-	partition(data, j);
-	partition(data, size - j);
+	return (0);
 }
 
+static t_slice	*init_slice(u_int pos, size_t size, int *from)
+{
+	t_slice	*slice;
+
+	slice = malloc(sizeof(t_slice));
+	if (!slice)
+		return (NULL);
+	slice->pos = pos;
+	slice->size = size;
+	slice->data = malloc(size * sizeof(int));
+	if (slice.data && from)
+		ft_memcpy(slice.data, from, size * sizeof(int));
+	slice.data = NULL;
+	if (slice.size <= 3)
+		return (slice);
+	
+	return (slice);
+}
+
+static int	init_subslices(t_slice slice, t_slice *subslices[3])
+{
+	const u_int	positions[4][3] = {
+		{BOT_B, TOP_B, BOT_A},
+		{BOT_B, TOP_B, TOP_A},
+		{BOT_B, BOT_A, TOP_A},
+		{TOP_B, BOT_A, TOP_A}};
+	size_t i;
+
+	i = -1;
+	while (i++ < 2)
+		(*subslices)[i] = init_slice(positions[slice.pos][i],
+					slice.size / 3 + (slice.size % 3 >= i + 1 && i < 2), NULL);
+	if (errno)
+	{
+		if ((*subslices)[0].data)
+			free((*subslices)[0].data);
+		if ((*subslices)[1].data)
+			free((*subslices)[1].data);
+		if ((*subslices)[2].data)
+			free((*subslices)[2].data);
+		free(slice.data);
+		return (1);
+	}
+	return (0);
+}
 
 int	main(int argc, char **argv)
 {
 	t_sdata		data;
-	int		i;
+	t_slice		*slice;
 
 	if (argc < 2)
+		return (print_cerror("Usage", ERRINITUSAGE));
+	if (init_stack(&data.a, argc - 1))
+		return (print_error("Stack creation"));
+	if (init_stack(&data.b, argc - 1) || fill_stack(&data, argc, argv)
+		|| is_duplicate(data.a) || is_sorted(data.a))
 	{
-		print_cerror("Usage", ERRINITUSAGE);
-		return (EXIT_FAILURE);
+		free(data.a.data);
+		if (data.b.data)
+			free(data.b.data);
+		return (print_error("Stack creation"));
 	}
-	data.a.total_size = argc - 1;
-	data.b.total_size = argc - 1;
-	data.a.data = ft_calloc(data.a.total_size, sizeof(int));
-	data.b.data = ft_calloc(data.b.total_size, sizeof(int));
-	data.a.size = 0;
-	data.b.size = 0;
-	if ((!data.a.data || !data.b.data) && print_error("Stack creation"))
-		return (EXIT_FAILURE);
-	
-	i = 1;
-	while (i < argc)
+	if (data.a.size < 10)
+		sort_ten(&data);
+	else
 	{
-		char *endptr;
-		data.a.data[i - 1] = ft_strtol(argv[i], &endptr, 0);
-		if (*endptr && print_cerror("Invalid number", ERRINITENTRY))
-			return (EXIT_FAILURE);
-		i++;
+		
 	}
-	data.a.size = data.a.total_size;
 	
-	data.ops = vec_new((argc - 1) * 7, sizeof(uint8_t));
+
 	
-	partition(&data, data.a.total_size);
-	
-	const char **op = (const char *[]){"sa", "sb", "ss", "pa", "pb", "ra", "rb", "rr", "rra", "rrb", "rrr"};
 	i = 0;
 	while (i < data.ops.actual_size)
 	{

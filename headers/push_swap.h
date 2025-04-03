@@ -6,7 +6,7 @@
 /*   By: dderny <dderny@42lyon.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/17 15:22:25 by dderny            #+#    #+#             */
-/*   Updated: 2025/04/03 13:07:00 by dderny           ###   ########.fr       */
+/*   Updated: 2025/04/03 15:35:34 by dderny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,10 @@ typedef enum e_slice_pos
 
 typedef struct s_slice
 {
-	int		*data;
-	size_t	size;
-	u_int	pos;
+	int				*data;
+	size_t			size;
+	u_int			pos;
+	struct s_slice	*subslices[3];
 }	t_slice;
 
 #endif
