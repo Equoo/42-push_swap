@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_error.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dderny <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: dderny <dderny@42lyon.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 23:58:57 by dderny            #+#    #+#             */
-/*   Updated: 2025/03/15 01:34:04 by dderny           ###   ########.fr       */
+/*   Updated: 2025/04/03 23:08:43 by dderny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ int	print_cerror(char *category, int error)
 		errorstr = ft_strerror(error);
 	if (!error)
 		errorstr = "Success";
-	ft_printf("%s: %s\n", category, errorstr);
+	ft_printf("Error\n%s: %s\n", category, errorstr);
 	return (error);
 }
 

@@ -19,6 +19,8 @@ LIBS = -L$(LIBFT_DIR) -lft
 # Sources
 SRCS = main.c \
 		ft_error.c \
+		quicksort.c \
+		sort_ten.c \
 		stack/operate_for.c \
 		stack/operate.c \
 		stack/push.c \
@@ -122,7 +124,7 @@ re: fclean all
 banner:
 	@echo -e "$(YELLOW)=====================================$(RESET)"
 	@echo -e "$(BLUE)             norminette            $(RESET)"
-	@norminette | grep -v -E "OK\!|$(NORMIGNORE)"; true
+#	@norminette | grep -v -E "OK\!|$(NORMIGNORE)"; true
 	@echo -e "$(YELLOW)=====================================$(RESET)"
 
 # Git Submodule Check

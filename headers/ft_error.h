@@ -6,7 +6,7 @@
 /*   By: dderny <dderny@42lyon.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 13:54:37 by dderny            #+#    #+#             */
-/*   Updated: 2025/04/03 15:40:49 by dderny           ###   ########.fr       */
+/*   Updated: 2025/04/03 22:58:43 by dderny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # define ERRINITLEN 1002
 # define ERRINITDUP 1003
 # define ERRINITINVALDIDNBR 1003
+# define ERRINITSORT 1004
 
 int	print_error(char *category);
 int	print_cerror(char *category, int error);

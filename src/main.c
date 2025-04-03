@@ -6,12 +6,11 @@
 /*   By: dderny <dderny@42lyon.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 22:18:56 by dderny            #+#    #+#             */
-/*   Updated: 2025/04/03 16:05:40 by dderny           ###   ########.fr       */
+/*   Updated: 2025/04/03 23:46:24 by dderny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_error.h"
-#include "ft_vector.h"
 #include "push_swap.h"
 #include "stack.h"
 
@@ -81,37 +80,23 @@ static int	is_sorted(t_stack stack)
 	size_t	i;
 
 	i = 0;
-	while (i < stack.size)
+	while (i < stack.size - 1)
 	{
 		if (stack.data[i] > stack.data[i + 1])
-		{
-			return (1);
-		}
+			break ;
 		i++;
+	}
+	if (i == stack.size - 1)
+	{
+		errno = ERRINITSORT;
+		return (1);
 	}
 	return (0);
 }
 
-static t_slice	*init_slice(u_int pos, size_t size, int *from)
-{
-	t_slice	*slice;
+static t_slice	*init_slice(u_int pos, size_t size, int *from);
 
-	slice = malloc(sizeof(t_slice));
-	if (!slice)
-		return (NULL);
-	slice->pos = pos;
-	slice->size = size;
-	slice->data = malloc(size * sizeof(int));
-	if (slice.data && from)
-		ft_memcpy(slice.data, from, size * sizeof(int));
-	slice.data = NULL;
-	if (slice.size <= 3)
-		return (slice);
-	
-	return (slice);
-}
-
-static int	init_subslices(t_slice slice, t_slice *subslices[3])
+static int	init_subslices(t_slice *slice)
 {
 	const u_int	positions[4][3] = {
 		{BOT_B, TOP_B, BOT_A},
@@ -121,21 +106,50 @@ static int	init_subslices(t_slice slice, t_slice *subslices[3])
 	size_t i;
 
 	i = -1;
-	while (i++ < 2)
-		(*subslices)[i] = init_slice(positions[slice.pos][i],
-					slice.size / 3 + (slice.size % 3 >= i + 1 && i < 2), NULL);
+	while (++i < 3)
+		slice->subslices[i] = init_slice(positions[slice->pos][i],
+					slice->size / 3 + (slice->size % 3 >= i + 1 && i < 2), NULL);
 	if (errno)
 	{
-		if ((*subslices)[0].data)
-			free((*subslices)[0].data);
-		if ((*subslices)[1].data)
-			free((*subslices)[1].data);
-		if ((*subslices)[2].data)
-			free((*subslices)[2].data);
-		free(slice.data);
+		i = -1;
+		while (++i < 3)
+		{
+			if (!slice->subslices[i])
+				continue ;
+			free(slice->subslices[i]->data);
+			free(slice->subslices[i]);
+		}
 		return (1);
 	}
 	return (0);
+}
+
+static t_slice	*init_slice(u_int pos, size_t size, int *from)
+{
+	t_slice	*slice;
+
+	slice = ft_calloc(1, sizeof(t_slice));
+	if (!slice)
+		return (NULL);
+	slice->pos = pos;
+	slice->size = size;
+	slice->data = ft_calloc(size, sizeof(int));
+	if (!slice->data)
+	{
+		free(slice);
+		return (NULL);
+	}
+	if (from)
+		ft_memcpy(slice->data, from, size * sizeof(int));
+	if (slice->size <= 3)
+		return (slice);
+	if (init_subslices(slice))
+	{
+		free(slice->data);
+		free(slice);
+		return (NULL);
+	}
+	return (slice);
 }
 
 int	main(int argc, char **argv)
@@ -143,6 +157,7 @@ int	main(int argc, char **argv)
 	t_sdata		data;
 	t_slice		*slice;
 
+	data = (t_sdata){0};
 	if (argc < 2)
 		return (print_cerror("Usage", ERRINITUSAGE));
 	if (init_stack(&data.a, argc - 1))
@@ -159,27 +174,16 @@ int	main(int argc, char **argv)
 		sort_ten(&data);
 	else
 	{
-		
+		slice = init_slice(TOP_A, data.a.size, data.a.data);
+		if (errno)
+		{
+			free(data.a.data);
+			free(data.b.data);
+			return (print_error("Slice creation"));
+		}
+		quicksort(&data, slice);
 	}
-	
-
-	
-	i = 0;
-	while (i < data.ops.actual_size)
-	{
-		ft_printf("%s\n", op[data.ops.data[i]]);
-		i++;
-	}
-
 	free(data.a.data);
 	free(data.b.data);
-	vec_destroy(&data.ops);
-	
-	/*i = 0;
-	while (i < argc - 1)
-	{
-		ft_printf("%d\n", data->a.data[i]);
-		i++;
-	}*/
 	return (EXIT_SUCCESS);
 }

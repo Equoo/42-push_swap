@@ -6,7 +6,7 @@
 /*   By: dderny <dderny@42lyon.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 00:22:59 by dderny            #+#    #+#             */
-/*   Updated: 2025/04/03 01:02:00 by dderny           ###   ########.fr       */
+/*   Updated: 2025/04/03 23:35:58 by dderny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,8 @@ static void	min_to_b(t_sdata *data)
 	u_int	op;
 
 	min = 0;
-	i = 0;
-	while (i < data->a.size)
+	i = -1;
+	while (++i < data->a.size)
 		if (data->a.data[i] < data->a.data[min])
 			min = i;
 	op = RA;
@@ -51,28 +51,51 @@ static void	min_to_b(t_sdata *data)
 		op = RRA;
 	}
 	i = 0;
-	while (!errno && i < min)
+	while (i++ < min)
 		operate(op, data);
 	operate(PB, data);
 }
 
 void	sort_three(t_sdata *data)
 {
-	if (data->a.data[0] > data->a.data[1] && data->a.data[0] > data->a.data[2])
+	int	*stack;
+
+	stack = data->a.data;
+	if (stack[0] < stack[2] && stack[2] < stack[1])
 	{
-		operate(RA, data);
-		if (data->a.data[0] > data->a.data[1])
-			operate(SA, data);
+		operate(RRA, data);
+		operate(SA, data);
 	}
-	else if (data->a.data[0] > data->a.data[1] && data->a.data[0] < data->a.data[2])
+	else if (stack[1] < stack[0] && stack[0] < stack[2])
 		operate(SA, data);
-	else if (data->a.data[0] < data->a.data[1] && data->a.data[0] > data->a.data[2])
+	else if (stack[2] < stack[0] && stack[0] < stack[1])
 		operate(RRA, data);
-	else if (data->a.data[0] < data->a.data[1] && data->a.data[0] < data->a.data[2])
+	else if (stack[1] < stack[2] && stack[2] < stack[0])
+		operate(RA, data);
+	else if (stack[2] < stack[1] && stack[1] < stack[0])
 	{
 		operate(RA, data);
 		operate(SA, data);
-		operate(RRA, data);
 	}
 }
+
+//void	sort_three(t_sdata *data)
+//{
+//	if (data->a.data[0] > data->a.data[1] && data->a.data[0] > data->a.data[2])
+//	{
+//		operate(RA, data);
+//		if (data->a.data[0] > data->a.data[1])
+//			operate(SA, data);
+//	}
+//	else if (data->a.data[0] > data->a.data[1] && data->a.data[0] < data->a.data[2])
+//		operate(SA, data);
+//	else if (data->a.data[0] < data->a.data[1] && data->a.data[0] > data->a.data[2])
+//		operate(RRA, data);
+//	else if (data->a.data[0] < data->a.data[1] && data->a.data[0] < data->a.data[2])
+//	{
+//		operate(RA, data);
+//		operate(SA, data);
+//		operate(RRA, data);
+//	}
+//}
 

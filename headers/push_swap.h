@@ -6,13 +6,14 @@
 /*   By: dderny <dderny@42lyon.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/17 15:22:25 by dderny            #+#    #+#             */
-/*   Updated: 2025/04/03 15:35:34 by dderny           ###   ########.fr       */
+/*   Updated: 2025/04/03 22:51:18 by dderny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PUSH_SWAP_H
 # define PUSH_SWAP_H
 
+#include "stack.h"
 #include <stddef.h>
 #include <sys/types.h>
 
@@ -31,5 +32,9 @@ typedef struct s_slice
 	u_int			pos;
 	struct s_slice	*subslices[3];
 }	t_slice;
+
+void	sort_three(t_sdata *data);
+void	sort_ten(t_sdata *data);
+int		quicksort(t_sdata *data, t_slice *slice);
 
 #endif
