@@ -1,0 +1,78 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   sort_ten.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dderny <dderny@42lyon.fr>                  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/03 00:22:59 by dderny            #+#    #+#             */
+/*   Updated: 2025/04/03 01:02:00 by dderny           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "push_swap.h"
+#include <errno.h>
+#include <sys/types.h>
+
+static void	min_to_b(t_sdata *data);
+
+void	sort_ten(t_sdata *data)
+{
+	if (data->a.size < 2)
+		return ;
+	if (data->a.size == 2)
+	{
+		if (data->a.data[0] > data->a.data[1])
+			operate(SA, data);
+		return ;
+	}
+	while (data->a.size > 3)
+		min_to_b(data);
+	sort_three(data);
+	while (data->b.size > 0)
+		operate(PA, data);
+}
+
+static void	min_to_b(t_sdata *data)
+{
+	u_int	i;
+	u_int	min;
+	u_int	op;
+
+	min = 0;
+	i = 0;
+	while (i < data->a.size)
+		if (data->a.data[i] < data->a.data[min])
+			min = i;
+	op = RA;
+	if (min > data->a.size / 2)
+	{
+		min = data->a.size - min;
+		op = RRA;
+	}
+	i = 0;
+	while (!errno && i < min)
+		operate(op, data);
+	operate(PB, data);
+}
+
+void	sort_three(t_sdata *data)
+{
+	if (data->a.data[0] > data->a.data[1] && data->a.data[0] > data->a.data[2])
+	{
+		operate(RA, data);
+		if (data->a.data[0] > data->a.data[1])
+			operate(SA, data);
+	}
+	else if (data->a.data[0] > data->a.data[1] && data->a.data[0] < data->a.data[2])
+		operate(SA, data);
+	else if (data->a.data[0] < data->a.data[1] && data->a.data[0] > data->a.data[2])
+		operate(RRA, data);
+	else if (data->a.data[0] < data->a.data[1] && data->a.data[0] < data->a.data[2])
+	{
+		operate(RA, data);
+		operate(SA, data);
+		operate(RRA, data);
+	}
+}
+

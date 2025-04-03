@@ -3,265 +3,182 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dderny <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: dderny <dderny@42lyon.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 22:18:56 by dderny            #+#    #+#             */
-/*   Updated: 2025/03/16 23:50:32 by dderny           ###   ########.fr       */
+/*   Updated: 2025/04/03 16:05:40 by dderny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_error.h"
 #include "ft_vector.h"
+#include "push_swap.h"
 #include "stack.h"
 
 #include <libft.h>
 #include <ft_bool.h>
 #include <errno.h>
 #include <ft_printf.h>
+#include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-
-
-
-void	swap(t_stack *stack)
+static int	init_stack(t_stack *stack, size_t size)
 {
-	int	swap;
-
-	if(stack->actual_size <= 1)
-		return ;
-	swap = stack->data[0];
-	stack->data[0] = stack->data[1];
-	stack->data[1] = swap;	
+	stack->data = ft_calloc(size, sizeof(int));
+	if (!stack->data)
+		return (1);
+	stack->size = 0;
+	stack->total_size = size;
+	return (0);
 }
 
-void	push(t_stack *from, t_stack *to)
+static int	fill_stack(t_sdata *data, size_t argc, char **argv)
 {
-	if (!from->actual_size)
-		return ;
-	if (to->actual_size > 1)
-		ft_memmove(to->data + 1, to->data, to->actual_size - 1);
-	to->data[0] = from->data[0];
-	to->actual_size++;
-	ft_memmove(from->data, from->data + 1, from->actual_size - 1);
-	from->actual_size--;
-	from->data[from->actual_size] = 0;
-}
+	char 		*endptr;
+	size_t		i;
 
-void	rotate(t_stack *stack, t_bool reverse)
-{
-	int	swap;
-
-	if (reverse)
-	{
-		swap = stack->data[stack->actual_size];
-		ft_memmove(stack->data + 1, stack->data, stack->actual_size - 1);
-		stack->data[0] = swap;
-	}
-	else
-	{
-		swap = stack->data[0];	
-		ft_memmove(stack->data, stack->data + 1, stack->actual_size - 1);
-		stack->data[stack->actual_size - 1] = swap;
-	}
-}
-
-//void	sa(t_vector *operations, t_stack *stack_a)
-//{
-//	const t_op	op = OP_SA;
-
-//	vec_append(operations, (void *)&op);
-//	swap(stack_a);
-//}
-
-//void	sb(t_vector *operations, t_stack *stack_b)
-//{
-//	const t_op	op = OP_SB;
-
-//	vec_append(operations, (void *)&op);
-//	swap(stack_b);
-//}
-
-//void	ss(t_vector *operations, t_stack *stack_a, t_stack *stack_b)
-//{
-//	const t_op	op = OP_SS;
-
-//	vec_append(operations, (void *)&op);
-//	swap(stack_a);
-//	swap(stack_b);
-//}
-
-//void	pa(t_vector *operations, t_stack *stack_a, t_stack *stack_b)
-//{
-//	const t_op	op = OP_PA;
-
-//	vec_append(operations, (void *)&op);
-//	push(stack_b, stack_a);
-//}
-
-//void	pb(t_vector *operations, t_stack *stack_a, t_stack *stack_b)
-//{
-//	const t_op	op = OP_PB;
-
-//	vec_append(operations, (void *)&op);
-//	push(stack_b, stack_a);
-//}
-
-//void	ra(t_vector *operations, t_stack *stack_a)
-//{
-//	const t_op	op = OP_RA;
-
-//	vec_append(operations, (void *)&op);
-//	rotate(stack_a, FALSE);
-//}
-
-//void	rb(t_vector *operations, t_stack *stack_b)
-//{
-//	const t_op	op = OP_RA;
-
-//	vec_append(operations, (void *)&op);
-//	rotate(stack_b, FALSE);
-//}
-
-//void	rr(t_vector *operations, t_stack *stack_a, t_stack *stack_b)
-//{
-//	const t_op	op = OP_RR;
-
-//	vec_append(operations, (void *)&op);
-//	rotate(stack_a, FALSE);
-//	rotate(stack_b, FALSE);
-//}
-
-//void	rra(t_vector *operations, t_stack *stack_a)
-//{
-//	const t_op	op = OP_RA;
-
-//	vec_append(operations, (void *)&op);
-//	rotate(stack_a, TRUE);
-//}
-
-//void	rrb(t_vector *operations, t_stack *stack_b)
-//{
-//	const t_op	op = OP_RA;
-
-//	vec_append(operations, (void *)&op);
-//	rotate(stack_b, TRUE);
-//}
-
-//void	rrr(t_vector *operations, t_stack *stack_a, t_stack *stack_b)
-//{
-//	const t_op	op = OP_RR;
-
-//	vec_append(operations, (void *)&op);
-//	rotate(stack_a, TRUE);
-//	rotate(stack_b, TRUE);
-//}
-
-void	operate(uint8_t op, t_vector *operations, t_stack *stack_a, t_stack *stack_b)
-{
-	vec_append(operations, (void *)&op);
-	if (op == OP_SA || op == OP_SS)
-		swap(stack_a);
-	if (op == OP_SB || op == OP_SS)
-		swap(stack_b);
-	if (op == OP_PA)
-		push(stack_b, stack_a);
-	if (op == OP_PB)
-		push(stack_a, stack_b);
-	if (op == OP_RA || op == OP_RR)
-		rotate(stack_a, FALSE);
-	if (op == OP_RB || op == OP_RR)
-		rotate(stack_b, FALSE);
-	if (op == OP_RRA || op == OP_RRR)
-		rotate(stack_a, TRUE);
-	if (op == OP_RRB || op == OP_RRR)
-		rotate(stack_b, TRUE);
-}
-
-void	operate_for(t_op op, ssize_t count, t_vector *operations, t_stack *stack_a, t_stack *stack_b)
-{
-	ssize_t	i;
-
-	i = 0;
-	while (i < count)
-	{
-		operate(op, operations, stack_a, stack_b);
-		i++;
-	}
-}
-
-int		get_pivot(t_stack *stack, ssize_t size)
-{
-	return (stack->data[size - 1]); // mediane
-}
-
-void	partition(t_vector *ops, t_stack *a, t_stack *b, ssize_t size)
-{
-	int	pivot;
-	ssize_t	i;
-
-	pivot = get_pivot(a, size);
-	i = 0;
-	while (i < size)
-	{
-		if (a->data[0] >= pivot)
-			operate(OP_PB, ops, a, b);
-		else
-			operate(OP_RA, ops, a, b);
-		i++;
-	}
-}
-
-
-int	main(int argc, char **argv)
-{
-	t_stack		stack_a;
-	t_stack		stack_b;
-	t_vector	operations;
-	int		i;
-
-	if (argc < 2)
-	{
-		print_cerror("Usage", ERRINITUSAGE);
-		return (EXIT_FAILURE);
-	}
-	stack_a.size = argc - 1;
-	stack_b.size = argc - 1;
-	stack_a.data = ft_calloc(stack_a.size, sizeof(int));
-	stack_b.data = ft_calloc(stack_b.size, sizeof(int));
-	stack_a.actual_size = 0;
-	stack_b.actual_size = 0;
-	if ((!stack_a.data || !stack_b.data) && print_error("Stack creation"))
-		return (EXIT_FAILURE);
-	
 	i = 1;
 	while (i < argc)
 	{
-		char *endptr;
-		stack_a.data[i - 1] = ft_strtol(argv[i], &endptr, 0);
-		if (*endptr && print_cerror("Invalid number", ERRINITENTRY))
-			return (EXIT_FAILURE);
+		data->a.data[i - 1] = ft_strtoi(argv[i], &endptr, 0);
+		data->a.size++;
+		if (*endptr)
+			errno = ERRINITINVALDIDNBR;
+		if (errno)
+			return (1);
 		i++;
 	}
-	stack_a.actual_size = stack_a.size;
-	
-	operations = vec_new((argc - 1) * 4, sizeof(uint8_t));
-	
-	partition(&operations, &stack_a, &stack_b, stack_a.size);
-	
-	const char **op = (const char *[]){"sa", "sb", "ss", "pa", "pb", "ra", "rb", "rr", "rra", "rrb", "rrr"};
+	return (0);
+}
+
+static int	is_duplicate(t_stack stack)
+{
+	size_t	i;
+	size_t	j;
+
 	i = 0;
-	while (operations.data[i])
+	while (i < stack.size)
 	{
-		ft_printf("%s\n", op[operations.data[i]]);
+		j = i + 1;
+		while (j < stack.size)
+		{
+			if (stack.data[i] == stack.data[j])
+			{
+				errno = ERRINITDUP;
+				return (1);
+			}
+			j++;
+		}
 		i++;
 	}
+	return (0);
+}
+
+static int	is_sorted(t_stack stack)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < stack.size)
+	{
+		if (stack.data[i] > stack.data[i + 1])
+		{
+			return (1);
+		}
+		i++;
+	}
+	return (0);
+}
+
+static t_slice	*init_slice(u_int pos, size_t size, int *from)
+{
+	t_slice	*slice;
+
+	slice = malloc(sizeof(t_slice));
+	if (!slice)
+		return (NULL);
+	slice->pos = pos;
+	slice->size = size;
+	slice->data = malloc(size * sizeof(int));
+	if (slice.data && from)
+		ft_memcpy(slice.data, from, size * sizeof(int));
+	slice.data = NULL;
+	if (slice.size <= 3)
+		return (slice);
+	
+	return (slice);
+}
+
+static int	init_subslices(t_slice slice, t_slice *subslices[3])
+{
+	const u_int	positions[4][3] = {
+		{BOT_B, TOP_B, BOT_A},
+		{BOT_B, TOP_B, TOP_A},
+		{BOT_B, BOT_A, TOP_A},
+		{TOP_B, BOT_A, TOP_A}};
+	size_t i;
+
+	i = -1;
+	while (i++ < 2)
+		(*subslices)[i] = init_slice(positions[slice.pos][i],
+					slice.size / 3 + (slice.size % 3 >= i + 1 && i < 2), NULL);
+	if (errno)
+	{
+		if ((*subslices)[0].data)
+			free((*subslices)[0].data);
+		if ((*subslices)[1].data)
+			free((*subslices)[1].data);
+		if ((*subslices)[2].data)
+			free((*subslices)[2].data);
+		free(slice.data);
+		return (1);
+	}
+	return (0);
+}
+
+int	main(int argc, char **argv)
+{
+	t_sdata		data;
+	t_slice		*slice;
+
+	if (argc < 2)
+		return (print_cerror("Usage", ERRINITUSAGE));
+	if (init_stack(&data.a, argc - 1))
+		return (print_error("Stack creation"));
+	if (init_stack(&data.b, argc - 1) || fill_stack(&data, argc, argv)
+		|| is_duplicate(data.a) || is_sorted(data.a))
+	{
+		free(data.a.data);
+		if (data.b.data)
+			free(data.b.data);
+		return (print_error("Stack creation"));
+	}
+	if (data.a.size < 10)
+		sort_ten(&data);
+	else
+	{
+		
+	}
+	
+
+	
+	i = 0;
+	while (i < data.ops.actual_size)
+	{
+		ft_printf("%s\n", op[data.ops.data[i]]);
+		i++;
+	}
+
+	free(data.a.data);
+	free(data.b.data);
+	vec_destroy(&data.ops);
 	
 	/*i = 0;
 	while (i < argc - 1)
 	{
-		ft_printf("%d\n", stack_a.data[i]);
+		ft_printf("%d\n", data->a.data[i]);
 		i++;
 	}*/
 	return (EXIT_SUCCESS);
