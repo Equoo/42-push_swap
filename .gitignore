@@ -42,6 +42,8 @@
 *.idb
 *.pdb
 *.txt
+tester/
+checker_linux
 compile_commands.json
 
 # Kernel Module Compile Results
