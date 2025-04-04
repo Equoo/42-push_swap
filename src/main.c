@@ -6,7 +6,7 @@
 /*   By: dderny <dderny@42lyon.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 22:18:56 by dderny            #+#    #+#             */
-/*   Updated: 2025/04/03 23:46:24 by dderny           ###   ########.fr       */
+/*   Updated: 2025/04/04 19:48:51 by dderny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,22 +33,47 @@ static int	init_stack(t_stack *stack, size_t size)
 	return (0);
 }
 
+void	get_indexes(size_t size, int *numbers, u_int *res)
+{
+	u_int	i;
+	u_int	j;
+
+	i = 0;
+	while (i < size)
+	{
+		res[i] = 0;
+		j = 0;
+		while (j < size)
+		{
+			res[i] += numbers[j] < numbers[i];
+			j++;
+		}
+		i++;
+	}
+}
+
 static int	fill_stack(t_sdata *data, size_t argc, char **argv)
 {
 	char 		*endptr;
+	int			*numbers;
 	size_t		i;
 
 	i = 1;
+	numbers = ft_calloc(argc - 1, sizeof(int));
+	if (!numbers)
+		return (1);
 	while (i < argc)
 	{
-		data->a.data[i - 1] = ft_strtoi(argv[i], &endptr, 0);
-		data->a.size++;
+		numbers[i - 1] = ft_strtoi(argv[i], &endptr, 0);
 		if (*endptr)
 			errno = ERRINITINVALDIDNBR;
 		if (errno)
 			return (1);
 		i++;
 	}
+	data->a.size = argc - 1;
+	get_indexes(data->a.size, numbers, data->a.data);
+	free(numbers);
 	return (0);
 }
 
@@ -94,7 +119,7 @@ static int	is_sorted(t_stack stack)
 	return (0);
 }
 
-static t_slice	*init_slice(u_int pos, size_t size, int *from);
+static t_slice	*init_slice(u_int pos, size_t size, u_int *from);
 
 static int	init_subslices(t_slice *slice)
 {
@@ -124,7 +149,7 @@ static int	init_subslices(t_slice *slice)
 	return (0);
 }
 
-static t_slice	*init_slice(u_int pos, size_t size, int *from)
+static t_slice	*init_slice(u_int pos, size_t size, u_int *from)
 {
 	t_slice	*slice;
 
@@ -150,6 +175,20 @@ static t_slice	*init_slice(u_int pos, size_t size, int *from)
 		return (NULL);
 	}
 	return (slice);
+}
+
+void	print_array(int *array, size_t size)
+{
+	size_t	i;
+
+	ft_printf("-------------------------\n");
+	i = 0;
+	while (i < size)
+	{
+		ft_printf("%d ", array[i]);
+		i++;
+	}
+	ft_printf("\n-------------------------\n");
 }
 
 int	main(int argc, char **argv)

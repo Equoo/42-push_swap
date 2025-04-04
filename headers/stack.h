@@ -6,7 +6,7 @@
 /*   By: dderny <dderny@42lyon.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 21:18:46 by dderny            #+#    #+#             */
-/*   Updated: 2025/04/03 15:51:38 by dderny           ###   ########.fr       */
+/*   Updated: 2025/04/04 19:42:19 by dderny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 
 typedef struct s_stack
 {
-	int			*data;
+	u_int			*data;
 	size_t		size;
 	size_t		total_size;
 }				t_stack;

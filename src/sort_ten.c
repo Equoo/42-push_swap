@@ -6,7 +6,7 @@
 /*   By: dderny <dderny@42lyon.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 00:22:59 by dderny            #+#    #+#             */
-/*   Updated: 2025/04/03 23:35:58 by dderny           ###   ########.fr       */
+/*   Updated: 2025/04/04 19:49:04 by dderny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ static void	min_to_b(t_sdata *data)
 
 void	sort_three(t_sdata *data)
 {
-	int	*stack;
+	u_int	*stack;
 
 	stack = data->a.data;
 	if (stack[0] < stack[2] && stack[2] < stack[1])

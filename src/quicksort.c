@@ -6,10 +6,11 @@
 /*   By: dderny <dderny@42lyon.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 00:27:01 by dderny            #+#    #+#             */
-/*   Updated: 2025/04/03 23:50:17 by dderny           ###   ########.fr       */
+/*   Updated: 2025/04/04 20:21:20 by dderny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "ft_printf.h"
 #include "push_swap.h"
 #include "stack.h"
 #include <limits.h>
@@ -19,10 +20,10 @@
 #include <errno.h>
 #include <sys/types.h>
 
-int	get_min(t_slice *slice)
+u_int	get_min(t_slice *slice)
 {
 	u_int	i;
-	int		min;
+	u_int		min;
 
 	min = INT_MAX;
 	i = 0;
@@ -85,26 +86,55 @@ void	move_from_to(t_sdata *data, u_int from, u_int to)
 void	split_slice(t_sdata *data, t_slice *slice)
 {
 	size_t	i;
-	int		base;
+	u_int	base;
+	t_slice	subslices[3];
 	t_slice	*subslice;
 
-	i = 0;
 	base = get_min(slice);
-	slice->subslices[0]->data += slice->subslices[0]->size - 1;
-	slice->subslices[1]->data += slice->subslices[1]->size - 1;
-	slice->subslices[2]->data += slice->subslices[2]->size - 1;
+	i = -1;
+	while (++i < 3)
+	{
+		subslices[i] = *(slice->subslices[i]);
+		subslices[i].data += subslices[i].size - 1;
+	}
+	i = 0;
 	while (i < slice->size)
 	{
 		slice->data[i] = slice->data[i] - base;
-		subslice = slice->subslices[2];
-		if ((size_t)slice->data[i] < slice->subslices[0]->size)
-			subslice = slice->subslices[0];
-		else if ((size_t)slice->data[i] < slice->subslices[0]->size + slice->subslices[1]->size)
-			subslice = slice->subslices[1];
+		subslice = &subslices[2];
+		if ((u_int)slice->data[i] < (u_int)subslices[0].size)
+			subslice = &subslices[0];
+		else if ((u_int)slice->data[i] < (u_int)(subslices[0].size + subslices[1].size))
+			subslice = &subslices[1];
 		move_from_to(data, slice->pos, subslice->pos);
 		*subslice->data-- = slice->data[i];
 		i++;
 	}
+}
+
+static void	sort_three_top_a(t_sdata *data)
+{
+	u_int	*stack;
+
+	stack = data->a.data;
+	if (stack[2] < stack[1] && stack[1] < stack[0])
+		operate(SA, data);
+	if (stack[2] < stack[0] && stack[0] < stack[1])
+	{
+		operate(RA, data);
+		operate(SA, data);
+		operate(RRA, data);
+	}
+	if (stack[1] < stack[2] && stack[2] < stack[0])
+		operate(SA, data);
+	if (stack[0] < stack[2] && stack[2] < stack[1])
+	{
+		operate(RA, data);
+		operate(SA, data);
+		operate(RRA, data);
+	}
+	if (stack[1] < stack[0] && stack[0] < stack[2])
+		operate(SA, data);
 }
 
 int	quicksort_base_case(t_sdata *data, t_slice *slice)
@@ -121,7 +151,7 @@ int	quicksort_base_case(t_sdata *data, t_slice *slice)
 		if (data->a.data[0] > data->a.data[1])
 			operate(SA, data);
 	if (slice->size == 3)
-		sort_three(data);
+		sort_three_top_a(data);
 	free(slice->data);
 	free(slice);
 	return (1);
@@ -129,16 +159,17 @@ int	quicksort_base_case(t_sdata *data, t_slice *slice)
 
 int	quicksort(t_sdata *data, t_slice *slice)
 {
-	static int	count = 0;
+	//static u_int	count = 0;
 
+	//print_array(slice->data, slice->size);
 	move_to_top(data, slice);
 	if (slice->size <= 3 && quicksort_base_case(data, slice))
-	return (0);
+		return (0);
 	split_slice(data, slice);
-	__builtin_printf("quicksort %d, %p, %zu\n", count++, slice->subslices[0], slice->subslices[0]->size);
-	quicksort(data, slice->subslices[0]);
-	quicksort(data, slice->subslices[1]);
+	//__builtin_printf("quicksort %d, %p, %d\n", count++, slice->subslices[0], slice->subslices[0]->data[0]);
 	quicksort(data, slice->subslices[2]);
+	quicksort(data, slice->subslices[1]);
+	quicksort(data, slice->subslices[0]);
 	free(slice->data);
 	free(slice);
 	return (0);
