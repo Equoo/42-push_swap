@@ -6,7 +6,7 @@
 /*   By: dderny <dderny@42lyon.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 22:18:56 by dderny            #+#    #+#             */
-/*   Updated: 2025/04/04 19:48:51 by dderny           ###   ########.fr       */
+/*   Updated: 2025/04/05 00:07:19 by dderny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,19 +177,19 @@ static t_slice	*init_slice(u_int pos, size_t size, u_int *from)
 	return (slice);
 }
 
-void	print_array(int *array, size_t size)
-{
-	size_t	i;
+//void	print_array(int *array, size_t size)
+//{
+//	size_t	i;
 
-	ft_printf("-------------------------\n");
-	i = 0;
-	while (i < size)
-	{
-		ft_printf("%d ", array[i]);
-		i++;
-	}
-	ft_printf("\n-------------------------\n");
-}
+//	ft_printf("-------------------------\n");
+//	i = 0;
+//	while (i < size)
+//	{
+//		ft_printf("%d ", array[i]);
+//		i++;
+//	}
+//	ft_printf("\n-------------------------\n");
+//}
 
 int	main(int argc, char **argv)
 {

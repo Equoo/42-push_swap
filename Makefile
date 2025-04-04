@@ -14,7 +14,7 @@ LIBFT_LIB = libft/libft.a
 # Compiler and linker flags
 EXTRAFLAGS = -O3
 CFLAGS = -Wall -Wextra -Werror -MMD -D $(shell echo "$(NAME)" | tr '[:lower:]' '[:upper:]')=1 -I $(INC_DIR) -I $(LIBFT_DIR)headers
-LIBS = -L$(LIBFT_DIR) -lft
+LIBS = -L$(LIBFT_DIR) -lft -L. -lbacktrace
 
 # Sources
 SRCS = main.c \
