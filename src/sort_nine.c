@@ -6,17 +6,17 @@
 /*   By: dderny <dderny@42lyon.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 00:22:59 by dderny            #+#    #+#             */
-/*   Updated: 2025/04/04 19:49:04 by dderny           ###   ########.fr       */
+/*   Updated: 2025/04/06 00:40:28 by dderny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
-#include <errno.h>
 #include <sys/types.h>
 
 static void	min_to_b(t_sdata *data);
+static void	sort_three(t_sdata *data);
 
-void	sort_ten(t_sdata *data)
+void	sort_nine(t_sdata *data)
 {
 	if (data->a.size < 2)
 		return ;
@@ -56,7 +56,7 @@ static void	min_to_b(t_sdata *data)
 	operate(PB, data);
 }
 
-void	sort_three(t_sdata *data)
+static void	sort_three(t_sdata *data)
 {
 	u_int	*stack;
 
@@ -78,24 +78,3 @@ void	sort_three(t_sdata *data)
 		operate(SA, data);
 	}
 }
-
-//void	sort_three(t_sdata *data)
-//{
-//	if (data->a.data[0] > data->a.data[1] && data->a.data[0] > data->a.data[2])
-//	{
-//		operate(RA, data);
-//		if (data->a.data[0] > data->a.data[1])
-//			operate(SA, data);
-//	}
-//	else if (data->a.data[0] > data->a.data[1] && data->a.data[0] < data->a.data[2])
-//		operate(SA, data);
-//	else if (data->a.data[0] < data->a.data[1] && data->a.data[0] > data->a.data[2])
-//		operate(RRA, data);
-//	else if (data->a.data[0] < data->a.data[1] && data->a.data[0] < data->a.data[2])
-//	{
-//		operate(RA, data);
-//		operate(SA, data);
-//		operate(RRA, data);
-//	}
-//}
-

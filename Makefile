@@ -12,15 +12,19 @@ LIBFT_DIR = libft/
 LIBFT_LIB = libft/libft.a
 
 # Compiler and linker flags
-EXTRAFLAGS = -O3
+EXTRAFLAGS = -O3 -D DEBUG=0
 CFLAGS = -Wall -Wextra -Werror -MMD -D $(shell echo "$(NAME)" | tr '[:lower:]' '[:upper:]')=1 -I $(INC_DIR) -I $(LIBFT_DIR)headers
-LIBS = -L$(LIBFT_DIR) -lft -L. -lbacktrace
+LIBS = -L$(LIBFT_DIR) -lft
 
 # Sources
 SRCS = main.c \
 		ft_error.c \
 		quicksort.c \
-		sort_ten.c \
+		sort_nine.c \
+		slice.c \
+		strtoi.c \
+		quicksort_utils.c \
+		stack.c \
 		stack/operate_for.c \
 		stack/operate.c \
 		stack/push.c \

@@ -6,7 +6,7 @@
 /*   By: dderny <dderny@42lyon.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 23:58:57 by dderny            #+#    #+#             */
-/*   Updated: 2025/04/04 16:33:10 by dderny           ###   ########.fr       */
+/*   Updated: 2025/04/06 01:18:52 by dderny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,10 @@ int	print_cerror(char *category, int error)
 		errorstr = ft_strerror(error);
 	if (!error)
 		errorstr = "Success";
-	ft_dprintf(STDERR_FILENO, "Error\n%s: %s\n", category, errorstr);
+	if (DEBUG)
+		ft_dprintf(STDERR_FILENO, "Error\n%s: %s\n", category, errorstr);
+	else
+		ft_dprintf(STDERR_FILENO, "Error\n");
 	return (error);
 }
 
