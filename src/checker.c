@@ -6,7 +6,7 @@
 /*   By: dderny <dderny@42lyon.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 19:28:02 by dderny            #+#    #+#             */
-/*   Updated: 2025/04/07 22:17:13 by dderny           ###   ########.fr       */
+/*   Updated: 2025/04/07 22:30:03 by dderny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,13 +32,14 @@ static int	check(t_sdata *data)
 		if (!line)
 			break ;
 		i = 0;
-		while (ft_strncmp(line, ops[i], ft_strlen(line) - 1))
+		if (line[ft_strlen(line) - 1] == '\n')
+			line[ft_strlen(line) - 1] = '\0';
+		while (i < 11 && ft_strcmp(line, ops[i]))
 			i++;
 		if (i > 10)
-		{
 			free(line);
+		if (i > 10)
 			return (1);
-		}
 		operate(i, data);
 		free(line);
 	}
