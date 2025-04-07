@@ -6,7 +6,7 @@
 /*   By: dderny <dderny@42lyon.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/06 00:38:16 by dderny            #+#    #+#             */
-/*   Updated: 2025/04/06 01:44:46 by dderny           ###   ########.fr       */
+/*   Updated: 2025/04/07 22:14:33 by dderny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,8 @@ static int	is_sorted(int *numbers, size_t size)
 {
 	size_t	i;
 
+	if (size < 2)
+		return (0);
 	i = 0;
 	while (i < size - 1)
 	{

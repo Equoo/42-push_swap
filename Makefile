@@ -1,6 +1,7 @@
 # Variables
 DEBUG = 0
 NAME = push_swap
+BONUS_NAME = checker
 STATE_FILE := .state.tmp
 CC = cc
 NORMIGNORE =
@@ -12,12 +13,12 @@ LIBFT_DIR = libft/
 LIBFT_LIB = libft/libft.a
 
 # Compiler and linker flags
-EXTRAFLAGS = -O3 -D DEBUG=0
-CFLAGS = -Wall -Wextra -Werror -MMD -D $(shell echo "$(NAME)" | tr '[:lower:]' '[:upper:]')=1 -I $(INC_DIR) -I $(LIBFT_DIR)headers
+EXTRAFLAGS = -O3 -D DEBUG=0 -D BONUS=0
+CFLAGS = -Wall -Wextra -Werror -MMD -I $(INC_DIR) -I $(LIBFT_DIR)headers
 LIBS = -L$(LIBFT_DIR) -lft
 
 # Sources
-SRCS = main.c \
+SRCS = push_swap.c \
 		ft_error.c \
 		quicksort.c \
 		sort_nine.c \
@@ -27,6 +28,20 @@ SRCS = main.c \
 		stack.c \
 		stack/operate_for.c \
 		stack/operate.c \
+		stack/push.c \
+		stack/rotate.c \
+		stack/swap.c \
+
+BONUS_SRCS = checker.c \
+		ft_error.c \
+		quicksort.c \
+		sort_nine.c \
+		slice.c \
+		strtoi.c \
+		quicksort_utils.c \
+		stack.c \
+		stack/operate_for.c \
+		stack/operate_bonus.c \
 		stack/push.c \
 		stack/rotate.c \
 		stack/swap.c \
@@ -53,7 +68,7 @@ clean_cmd:
 # Targets
 .PHONY: all
 all: clean_cmd check_git_submodules banner libft check_build
-	@$(MAKE) -j$(shell nproc) --no-print-directory EXTRAFLAGS="$(EXTRAFLAGS)" $(NAME)
+	@$(MAKE) -j$(shell nproc) --no-print-directory EXTRAFLAGS="$(EXTRAFLAGS)" SRCS="$(SRCS)" $(NAME)
 	@STATE=$$(cat $(STATE_FILE) 2>/dev/null || echo 0); \
 	if [ $$STATE -eq 1 ]; then \
 		echo -e "$(BLUE)[✓] Everything is up to date! No need to rebuild.$(RESET)"; \
@@ -77,17 +92,19 @@ check_build:
 	fi
 
 .PHONY: debug
-debug: EXTRAFLAGS = -O0 -g3 -DDEBUG=1
+debug: EXTRAFLAGS = -O0 -g3 -DDEBUG=1 -DBONUS=0
 debug: LIBFTTARGET = debug
 debug: DEBUG = 1
 debug: all
 	touch .d
 
 .PHONY: bonus
-bonus: SRCS = $(SRCS_BONUS)
+bonus: SRCS = $(BONUS_SRCS)
+bonus: NAME = $(BONUS_NAME)
+bonus: EXTRAFLAGS = -O3 -D DEBUG=0 -D BONUS=1
 bonus: BONUS = 1
 bonus: all
-	touch .b
+	touch .d
 
 %/:
 	@mkdir -p $@
@@ -101,7 +118,12 @@ $(DIR_OBJ)%.o: $(SRC_DIR)%.c Makefile
 libft:
 	@$(MAKE) --no-print-directory -s -C $(LIBFT_DIR) $(LIBFTTARGET)
 
-$(NAME): $(LIBFT_LIB) Makefile $(OBJS)
+$(NAME): Makefile $(OBJS)
+	@echo -e "$(BLUE)[Linking]$(RESET) $@"
+	$(CC) $(CFLAGS) $(EXTRAFLAGS) -o $@ $(filter %.o, $^) $(LIBS)
+	@echo -e "$(GREEN)[✓] Successfully built: $@$(RESET)"
+
+$(BONUS_NAME): Makefile $(OBJS)
 	@echo -e "$(BLUE)[Linking]$(RESET) $@"
 	$(CC) $(CFLAGS) $(EXTRAFLAGS) -o $@ $(filter %.o, $^) $(LIBS)
 	@echo -e "$(GREEN)[✓] Successfully built: $@$(RESET)"
@@ -120,6 +142,7 @@ fclean: clean
 	@echo -e "$(RED)[Full Clean]$(RESET)"
 	@$(MAKE) --no-print-directory -C $(LIBFT_DIR) fclean
 	@rm -f $(NAME)
+	@rm -f $(BONUS_NAME)
 	@echo -e "$(GREEN)[✓] Fully cleaned everything!$(RESET)"
 
 re: fclean all

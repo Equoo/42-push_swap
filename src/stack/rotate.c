@@ -6,7 +6,7 @@
 /*   By: dderny <dderny@42lyon.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/28 00:11:12 by dderny            #+#    #+#             */
-/*   Updated: 2025/04/06 01:13:35 by dderny           ###   ########.fr       */
+/*   Updated: 2025/04/07 21:58:48 by dderny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ void	rotate(t_stack *stack, t_bool reverse)
 {
 	int	swap;
 
+	if (stack->size < 2)
+		return ;
 	if (reverse)
 	{
 		swap = stack->data[stack->size - 1];
