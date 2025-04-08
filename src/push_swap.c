@@ -6,7 +6,7 @@
 /*   By: dderny <dderny@42lyon.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 22:18:56 by dderny            #+#    #+#             */
-/*   Updated: 2025/04/07 21:54:43 by dderny           ###   ########.fr       */
+/*   Updated: 2025/04/08 04:09:34 by dderny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,9 @@ int	main(int argc, char **argv)
 		free(data.a.data);
 		if (data.b.data)
 			free(data.b.data);
-		return (print_error("Stack creation"));
+		if (errno)
+			return (print_error("Stack creation"));
+		return (EXIT_SUCCESS);
 	}
 	if (sort(&data))
 		return (EXIT_FAILURE);

@@ -6,7 +6,7 @@
 /*   By: dderny <dderny@42lyon.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/06 00:38:16 by dderny            #+#    #+#             */
-/*   Updated: 2025/04/07 22:14:33 by dderny           ###   ########.fr       */
+/*   Updated: 2025/04/08 04:10:18 by dderny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,10 @@ static int	is_duplicate(int *numbers, size_t size)
 		while (j < size)
 		{
 			if (numbers[i] == numbers[j])
+			{
+				errno = ERRINITINVALDIDNBR;
 				return (1);
+			}
 			j++;
 		}
 		i++;
@@ -79,10 +82,7 @@ static int	is_sorted(int *numbers, size_t size)
 		i++;
 	}
 	if (i == size - 1)
-	{
-		errno = ERRINITSORT;
 		return (1);
-	}
 	return (0);
 }
 
