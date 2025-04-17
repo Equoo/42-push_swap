@@ -145,6 +145,7 @@ fclean: clean
 	@rm -f $(BONUS_NAME)
 	@echo -e "$(GREEN)[✓] Fully cleaned everything!$(RESET)"
 
+.PHONY: re
 re: fclean all
 
 .PHONY: banner

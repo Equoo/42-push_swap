@@ -6,7 +6,7 @@
 /*   By: dderny <dderny@42lyon.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/06 01:40:16 by dderny            #+#    #+#             */
-/*   Updated: 2025/04/08 04:04:05 by dderny           ###   ########.fr       */
+/*   Updated: 2025/04/17 11:31:03 by dderny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,10 @@ static char	*process_start(char *str, int *base, int *sign)
 		*base = 10;
 	while (*str && *str == ' ')
 		str++;
+	if (*str == '-' && str++)
+		*sign = -1;
+	else if (*str == '+')
+		str++;
 	while (*str && *str == '0')
 		str++;
 	if (*str && *str != '-' && *str != '+'
@@ -51,10 +55,6 @@ static char	*process_start(char *str, int *base, int *sign)
 		errno = EINVAL;
 		return (NULL);
 	}
-	if (*str == '-' && str++)
-		*sign = -1;
-	else if (*str == '+')
-		str++;
 	return (str);
 }
 
