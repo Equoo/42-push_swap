@@ -87,7 +87,7 @@ check_build:
 		! [ -z "$(wildcard $(OBJS)/$(NAME))/" ]; then \
 		echo "1" > $(STATE_FILE); \
 	else \
-		echo -e "$(YELLOW)[Building MiniTalk]$(RESET)"; \
+		echo -e "$(YELLOW)[Building Push_Swap]$(RESET)"; \
 		echo "0" > $(STATE_FILE); \
 	fi
 

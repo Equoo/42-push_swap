@@ -6,7 +6,7 @@
 /*   By: dderny <dderny@42lyon.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/06 00:38:16 by dderny            #+#    #+#             */
-/*   Updated: 2025/04/08 04:10:18 by dderny           ###   ########.fr       */
+/*   Updated: 2025/04/21 13:50:33 by dderny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ static void	get_indexes(size_t size, int *numbers, u_int *res)
 	}
 }
 
-static int	is_duplicate(int *numbers, size_t size)
+static int	is_dup(int *numbers, size_t size)
 {
 	size_t	i;
 	size_t	j;
@@ -102,10 +102,10 @@ int	fill_stack(t_sdata *data, size_t argc, char **argv)
 		if (*endptr)
 			errno = ERRINITINVALDIDNBR;
 		if (errno)
-			return (1);
+			break ;
 	}
 	data->a.size = argc - 1;
-	if (is_sorted(numbers, argc - 1) || is_duplicate(numbers, argc - 1))
+	if (errno || is_dup(numbers, argc - 1) || is_sorted(numbers, argc - 1))
 	{
 		free(numbers);
 		return (1);
